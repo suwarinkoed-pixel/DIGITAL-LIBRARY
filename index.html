@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+
+  <title>Digital Library | ห้องสมุดประชาชนอำเภอพุทธมณฑล</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Arial", sans-serif;
+      background: #f4efff;
+    }
+
+    #libraryFrame {
+      display: block;
+      width: 100%;
+      height: 100dvh;
+      border: none;
+      background: #f4efff;
+    }
+
+    #loading {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: linear-gradient(
+        135deg, #f5efff, #e6f1ff
+      );
+      color: #24145f;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #e4d5ff;
+      border-top-color: #8235ed;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    p {
+      margin: 0;
+      color: #6c6090;
+    }
+
+    #fallback {
+      display: none;
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      background: white;
+      padding: 12px 18px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px #20105020;
+      text-align: center;
+    }
+
+    #fallback a {
+      color: #7032d7;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <h2>📚 Digital Library</h2>
+    <p>กำลังเปิดห้องสมุดประชาชนอำเภอพุทธมณฑล...</p>
+  </div>
+
+  <iframe
+    id="libraryFrame"
+    title="Digital Library"
+    allow="fullscreen"
+    referrerpolicy="strict-origin-when-cross-origin">
+  </iframe>
+
+  <div id="fallback">
+    หากหน้าเว็บไซต์ไม่แสดง
+    <a id="directLink"
+       target="_blank"
+       rel="noopener noreferrer">
+      คลิกเปิดเว็บไซต์โดยตรง
+    </a>
+  </div>
+
+  <script>
+    // ใส่ลิงก์ Google Apps Script Web App
+    const WEB_APP_URL =
+      "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE";
+
+    const frame = document.getElementById("libraryFrame");
+    const loading = document.getElementById("loading");
+    const fallback = document.getElementById("fallback");
+    const directLink = document.getElementById("directLink");
+
+    if (WEB_APP_URL.startsWith("https://")) {
+      frame.src = WEB_APP_URL;
+      directLink.href = WEB_APP_URL;
+      fallback.style.display = "block";
+
+      frame.addEventListener("load", () => {
+        loading.style.display = "none";
+      });
+    } else {
+      loading.innerHTML = `
+        <h2>⚙️ ยังไม่ได้ตั้งค่าลิงก์เว็บไซต์</h2>
+        <p>กรุณาใส่ URL ของ Apps Script ในไฟล์ index.html</p>
+      `;
+    }
+  </script>
+
+</body>
+</html>
