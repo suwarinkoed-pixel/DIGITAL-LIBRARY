@@ -1,67 +1,89 @@
 
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
+const DL_API_URL =
+  'https://script.google.com/a/macros/dole.go.th/s/AKfycbx_toFk85SsqcwmOwti5kYgiF5i-VsJTXKKZlplKWFM6Amh7ehHAcoROwNU6gI6icJ1/exec';
 
-  <title>Digital Library | ห้องสมุดประชาชนอำเภอพุทธมณฑล</title>
+let dlRequestCount = 0;
 
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #eee9ff, #e8f3ff);
-      font-family: Arial, sans-serif;
-      text-align: center;
-      color: #22135c;
+function dlPublicFetch(type) {
+  return new Promise((resolve, reject) => {
+    const callback =
+      'dlPublicCallback_' +
+      (++dlRequestCount) + '_' +
+      Math.random().toString(36).slice(2, 10);
+
+    const script = document.createElement('script');
+
+    const timeout = setTimeout(() => {
+      finish(new Error('หมดเวลารอข้อมูล'));
+    }, 18000);
+
+    function finish(error, data) {
+      clearTimeout(timeout);
+      delete window[callback];
+      script.remove();
+
+      if (error) reject(error);
+      else resolve(data);
     }
 
-    .card {
-      background: white;
-      padding: 40px 25px;
-      border-radius: 24px;
-      box-shadow: 0 12px 35px #34206020;
-      max-width: 420px;
-      margin: 20px;
-    }
+    window[callback] = data => {
+      if (data && data.error) {
+        finish(new Error(data.error));
+      } else {
+        finish(null, data);
+      }
+    };
 
-    h1 {
-      font-size: 26px;
-    }
+    script.onerror = () => {
+      finish(new Error('เชื่อมต่อ Apps Script ไม่สำเร็จ'));
+    };
 
-    p {
-      color: #6c6090;
-      line-height: 1.7;
-    }
+    script.src =
+      DL_API_URL +
+      '?type=' + encodeURIComponent(type) +
+      '&callback=' + encodeURIComponent(callback);
 
-    a {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 15px 28px;
-      background: linear-gradient(135deg, #a63af1, #5725ce);
-      color: white;
-      text-decoration: none;
-      border-radius: 14px;
-      font-weight: bold;
-    }
-  </style>
-</head>
+    document.head.appendChild(script);
+  });
+}
 
-<body>
-  <div class="card">
-    <h1>📚 Digital Library</h1>
-    <h2>ห้องสมุดประชาชนอำเภอพุทธมณฑล</h2>
-    <p>ยินดีต้อนรับสู่ห้องสมุดออนไลน์<br>
-    เรียนรู้ได้ทุกที่ ทุกเวลา</p>
+// แสดงแหล่งเรียนรู้
+function loadSources() {
+  if (sourcesLoaded) return;
 
-    <a href="https://script.google.com/a/macros/dole.go.th/s/AKfycbx_toFk85SsqcwmOwti5kYgiF5i-VsJTXKKZlplKWFM6Amh7ehHAcoROwNU6gI6icJ1/exec">
-      เข้าสู่ห้องสมุดออนไลน์
-    </a>
-  </div>
-</body>
-</html>
+  const status = document.getElementById('sourcesStatus');
+  status.textContent = 'กำลังโหลดข้อมูล...';
+
+  dlPublicFetch('sources')
+    .then(data => {
+      sources = Array.isArray(data) ? data : [];
+      sourcesLoaded = true;
+      renderChips();
+      renderSources();
+    })
+    .catch(err => {
+      status.textContent = 'โหลดไม่สำเร็จ: ' + err.message;
+    });
+}
+
+// แสดง E-Book บนชั้นหนังสือ
+function loadEbooks() {
+  const status = document.getElementById('ebookStatus');
+  status.textContent = 'กำลังโหลดหนังสือ...';
+
+  dlPublicFetch('ebooks')
+    .then(data => {
+      ebooks = Array.isArray(data) ? data : [];
+      renderEbookCategories();
+      renderEbooks();
+    })
+    .catch(err => {
+      status.textContent = 'โหลดไม่สำเร็จ: ' + err.message;
+    });
+}
+
+// แอดมินเปิดผ่าน Apps Script โดยตรง
+function openAdmin() {
+  toggleMenu(false);
+  window.open(DL_API_URL, '_blank', 'noopener,noreferrer');
+}
