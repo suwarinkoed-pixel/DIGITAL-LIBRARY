@@ -9,132 +9,59 @@
   <title>Digital Library | ห้องสมุดประชาชนอำเภอพุทธมณฑล</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: #f4efff;
-    }
-
-    #libraryFrame {
-      display: block;
-      width: 100%;
-      height: 100dvh;
-      border: none;
-      background: #f4efff;
-    }
-
-    #loading {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
+      min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      background: linear-gradient(
-        135deg, #f5efff, #e6f1ff
-      );
-      color: #24145f;
+      background: linear-gradient(135deg, #eee9ff, #e8f3ff);
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
+      color: #22135c;
     }
 
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 5px solid #e4d5ff;
-      border-top-color: #8235ed;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+    .card {
+      background: white;
+      padding: 40px 25px;
+      border-radius: 24px;
+      box-shadow: 0 12px 35px #34206020;
+      max-width: 420px;
+      margin: 20px;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 22px;
+    h1 {
+      font-size: 26px;
     }
 
     p {
-      margin: 0;
       color: #6c6090;
+      line-height: 1.7;
     }
 
-    #fallback {
-      position: fixed;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-      background: white;
-      padding: 12px 18px;
-      border-radius: 16px;
-      box-shadow: 0 8px 25px #20105020;
-      text-align: center;
-      display: none;
-    }
-
-    #fallback a {
-      color: #7032d7;
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 15px 28px;
+      background: linear-gradient(135deg, #a63af1, #5725ce);
+      color: white;
+      text-decoration: none;
+      border-radius: 14px;
       font-weight: bold;
     }
   </style>
 </head>
 
 <body>
+  <div class="card">
+    <h1>📚 Digital Library</h1>
+    <h2>ห้องสมุดประชาชนอำเภอพุทธมณฑล</h2>
+    <p>ยินดีต้อนรับสู่ห้องสมุดออนไลน์<br>
+    เรียนรู้ได้ทุกที่ ทุกเวลา</p>
 
-  <div id="loading">
-    <div class="spinner"></div>
-    <h2>📚 Digital Library</h2>
-    <p>กำลังเปิดห้องสมุดประชาชนอำเภอพุทธมณฑล...</p>
-  </div>
-
-  <iframe
-    id="libraryFrame"
-    title="Digital Library"
-    allow="fullscreen"
-    referrerpolicy="strict-origin-when-cross-origin">
-  </iframe>
-
-  <div id="fallback">
-    หากเว็บไซต์ไม่แสดง
-    <a id="directLink"
-       target="_blank"
-       rel="noopener noreferrer">
-      คลิกเปิดเว็บไซต์โดยตรง
+    <a href="https://script.google.com/a/macros/dole.go.th/s/AKfycbx_toFk85SsqcwmOwti5kYgiF5i-VsJTXKKZlplKWFM6Amh7ehHAcoROwNU6gI6icJ1/exec">
+      เข้าสู่ห้องสมุดออนไลน์
     </a>
   </div>
-
-  <script>
-    // ลิงก์ Google Apps Script ของ Digital Library
-    const WEB_APP_URL =
-      "https://script.google.com/a/macros/dole.go.th/s/AKfycbx_toFk85SsqcwmOwti5kYgiF5i-VsJTXKKZlplKWFM6Amh7ehHAcoROwNU6gI6icJ1/exec";
-
-    const frame = document.getElementById("libraryFrame");
-    const loading = document.getElementById("loading");
-    const fallback = document.getElementById("fallback");
-    const directLink = document.getElementById("directLink");
-
-    frame.src = WEB_APP_URL;
-    directLink.href = WEB_APP_URL;
-
-    fallback.style.display = "block";
-
-    frame.addEventListener("load", () => {
-      loading.style.display = "none";
-    });
-  </script>
-
 </body>
 </html>
