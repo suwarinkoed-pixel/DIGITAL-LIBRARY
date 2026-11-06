@@ -1,23 +1,621 @@
 
-const DL_API_URL =
-  'https://script.google.com/a/macros/dole.go.th/s/AKfycbx_toFk85SsqcwmOwti5kYgiF5i-VsJTXKKZlplKWFM6Amh7ehHAcoROwNU6gI6icJ1/exec';
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digital Library | ห้องสมุดประชาชนอำเภอพุทธมณฑล</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
-let dlRequestCount = 0;
+<style>
+:root {
+  --navy:#101c57;
+  --purple:#7632e6;
+  --pink:#df27b1;
+  --bg:#f4efff;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Prompt,sans-serif;
+  background:var(--bg);
+  color:var(--navy);
+}
+button,input {font:inherit}
+button {cursor:pointer}
+.sidebar {
+  position:fixed;
+  top:0;left:0;bottom:0;
+  width:260px;
+  background:linear-gradient(160deg,#0755b0,#101c68 60%,#a322d4);
+  color:white;
+  padding:25px 14px;
+  display:flex;
+  flex-direction:column;
+  z-index:20;
+}
+.logo {text-align:center;margin-bottom:28px}
+.logo i {font-size:44px;color:#ffde59}
+.logo h2 {line-height:1.2;margin:12px 0}
+.logo small {font-size:12px}
+.nav {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  border:0;
+  width:100%;
+  background:transparent;
+  color:white;
+  padding:15px;
+  margin:5px 0;
+  border-radius:14px;
+  text-align:left;
+  font-weight:600;
+}
+.nav.active,.nav:hover {
+  background:linear-gradient(110deg,#ae45f4,#7130e8);
+}
+.nav i {width:23px}
+.admin {
+  margin-top:auto;
+  background:#6823b3;
+  color:white;
+  border:1px solid #ffffff80;
+  border-radius:14px;
+  padding:14px;
+  font-weight:700;
+}
+.main {
+  margin-left:260px;
+  padding:28px 35px 60px;
+  min-height:100vh;
+}
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:24px;
+}
+header small {color:#6673a6}
+header h2 {margin:4px 0;font-size:23px}
+.page {display:none}
+.page.active {display:block}
+.hero {
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:24px;
+  box-shadow:0 12px 30px #3e259c20;
+}
+h2 {font-weight:800}
+.subtitle {color:#7180a6}
+.cards {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:22px;
+  margin-top:22px;
+}
+.card {
+  min-width:0;
+  background:white;
+  padding:10px;
+  border-radius:24px;
+  box-shadow:0 12px 30px #3d259319;
+}
+.card img {
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:contain;
+  border-radius:16px;
+  background:#f3ecff;
+}
+.card h3 {text-align:center;margin:14px 5px 6px}
+.card p {
+  text-align:center;
+  color:#7480a5;
+  font-size:13px;
+  min-height:24px;
+}
+.btn {
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:13px;
+  color:white;
+  font-weight:700;
+  background:linear-gradient(110deg,#a63cf2,#5b26d3);
+}
+.btn.blue {
+  background:linear-gradient(110deg,#249fe8,#0c54c3);
+}
+.btn.pink {
+  background:linear-gradient(110deg,#ef45b9,#b20c9d);
+}
+.back {
+  background:white;
+  border:1px solid #ded2ff;
+  border-radius:14px;
+  padding:12px 18px;
+  color:#6933c4;
+  margin-bottom:22px;
+}
+.search {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:15px 18px;
+  background:white;
+  border-radius:17px;
+  box-shadow:0 7px 20px #35207e10;
+}
+.search i {color:#8138e7}
+.search input {
+  border:0;
+  outline:0;
+  width:100%;
+  background:transparent;
+}
+.chips {
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:18px 0;
+}
+.chip {
+  border:1px solid #ddceff;
+  border-radius:25px;
+  background:white;
+  padding:9px 15px;
+  color:#6530b6;
+}
+.chip.active {
+  color:white;
+  background:#7936e4;
+}
+.detail {
+  background:white;
+  padding:25px;
+  border-radius:22px;
+  line-height:1.9;
+}
+.detail img {
+  max-width:100%;
+  max-height:380px;
+  object-fit:contain;
+  border-radius:15px;
+}
+.detail a {
+  display:inline-block;
+  margin:10px 10px 0 0;
+  background:#7131dc;
+  color:white;
+  padding:10px 18px;
+  border-radius:12px;
+  text-decoration:none;
+}
+.ebook-banner {
+  text-align:center;
+  background:linear-gradient(110deg,#e6d5ff,#f9e8ff,#d8edff);
+  padding:25px 15px;
+  border-radius:24px;
+}
+.ebook-banner h1 {
+  color:#6825c7;
+  font-size:36px;
+  margin:0;
+}
+.ebook-layout {
+  display:grid;
+  grid-template-columns:235px minmax(0,1fr);
+  gap:20px;
+  margin-top:22px;
+}
+.ebook-menu {
+  background:white;
+  border-radius:20px;
+  padding:15px;
+  height:max-content;
+}
+.ebook-menu button {
+  width:100%;
+  text-align:left;
+  padding:12px;
+  border:1px solid #e8ddff;
+  border-radius:13px;
+  background:#faf8ff;
+  color:#17215b;
+  margin:5px 0;
+}
+.ebook-menu button.active {
+  background:linear-gradient(110deg,#a447f2,#6531db);
+  color:white;
+}
+.toolbar {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-bottom:16px;
+}
+.toolbar .search {flex:1;min-width:0}
+.count {
+  background:white;
+  padding:14px;
+  border-radius:18px;
+  color:#7c33d8;
+  white-space:nowrap;
+}
+.shelf {
+  background:linear-gradient(90deg,#c58b51,#f6ce99 15%,#e6ae72 85%,#bc7c43);
+  padding:18px 14px 1px;
+  border-radius:18px;
+  box-shadow:0 12px 22px #67371230;
+}
+.book-row {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:15px;
+  padding:12px 8px 20px;
+  margin-bottom:20px;
+  border-bottom:19px solid #9c582a;
+  box-shadow:0 8px 0 #dba16b,0 13px 9px #63340b45;
+}
+.book {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-width:0;
+  text-align:center;
+}
+.cover {
+  width:100%;
+  max-width:185px;
+  aspect-ratio:3/4;
+  object-fit:cover;
+  border-radius:6px;
+  box-shadow:6px 6px 9px #4a270d55;
+}
+.book-title {
+  font-size:13px;
+  font-weight:700;
+  margin:10px 0;
+  min-height:40px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.read {
+  margin-top:auto;
+  border:1px solid #d7c5ff;
+  background:#fff;
+  color:#4c27a5;
+  border-radius:25px;
+  padding:9px 13px;
+  font-size:12px;
+  font-weight:700;
+}
+.status {
+  text-align:center;
+  color:#7563a4;
+  margin:20px 0;
+}
+.menu-btn {
+  display:none;
+  position:fixed;
+  top:12px;right:12px;
+  z-index:40;
+  border:0;
+  background:#7631e5;
+  color:white;
+  border-radius:12px;
+  padding:12px;
+}
+.overlay {display:none}
+footer {
+  margin-top:50px;
+  text-align:center;
+  color:#8580a7;
+  font-size:12px;
+}
+@media(max-width:1100px) {
+  .cards {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ebook-layout {grid-template-columns:1fr}
+  .ebook-menu {display:flex;flex-wrap:wrap;gap:7px}
+  .ebook-menu h3 {width:100%}
+  .ebook-menu button {width:auto;margin:0}
+}
+@media(max-width:800px) {
+  .menu-btn {display:block}
+  .sidebar {
+    transform:translateX(-100%);
+    transition:transform .2s;
+  }
+  .sidebar.open {transform:translateX(0)}
+  .overlay.show {
+    display:block;
+    position:fixed;
+    inset:0;
+    background:#080b3870;
+    z-index:15;
+  }
+  .main {margin-left:0;padding:65px 15px 35px}
+  header h2 {font-size:19px}
+  header>span {display:none}
+  .cards {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .card h3 {font-size:14px}
+  .book-row {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ebook-banner h1 {font-size:27px}
+}
+@media(max-width:420px) {
+  .cards {grid-template-columns:1fr}
+}
+</style>
+</head>
 
-function dlPublicFetch(type) {
+<body>
+<button class="menu-btn" onclick="toggleMenu()">
+  <i class="fa-solid fa-bars"></i>
+</button>
+<div id="overlay" class="overlay" onclick="toggleMenu(false)"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <i class="fa-solid fa-book-open-reader"></i>
+    <h2>DIGITAL<br>LIBRARY</h2>
+    <small>ห้องสมุดประชาชน<br>อำเภอพุทธมณฑล</small>
+  </div>
+
+  <button class="nav active" data-page="home" onclick="go('home')">
+    <i class="fa-solid fa-house"></i> หน้าแรก
+  </button>
+  <button class="nav" onclick="window.open('https://suwarinkoed-pixel.github.io/reading-online/','_blank')">
+    <i class="fa-solid fa-award"></i> เกียรติบัตรออนไลน์
+  </button>
+  <button class="nav" data-page="learning" onclick="go('learning')">
+    <i class="fa-solid fa-map-location-dot"></i> แหล่งเรียนรู้
+  </button>
+  <button class="nav" data-page="ebooks" onclick="go('ebooks')">
+    <i class="fa-solid fa-book-open"></i> E-Book ออนไลน์
+  </button>
+
+  <button class="admin" onclick="openAdmin()">
+    <i class="fa-solid fa-gear"></i> ผู้ดูแลระบบ (Admin)
+  </button>
+</aside>
+
+<main class="main">
+<header>
+  <div>
+    <small>ยินดีต้อนรับสู่คลังความรู้ออนไลน์</small>
+    <h2>ห้องสมุดประชาชนอำเภอพุทธมณฑล</h2>
+  </div>
+  <span>📚 เรียนรู้ได้ทุกที่ ทุกเวลา</span>
+</header>
+
+<section id="home" class="page active">
+  <img class="hero"
+    src="https://i.postimg.cc/c4dJv8wL/bdd6bb5b-2eec-4944-8241-0ef37155a0c0.png"
+    alt="Digital Library">
+
+  <h2>ค้นพบโลกแห่งการเรียนรู้ ✨</h2>
+  <p class="subtitle">เลือกบริการและแหล่งความรู้ที่สนใจ</p>
+
+  <div class="cards">
+    <article class="card">
+      <img src="https://i.postimg.cc/25KHZmg0/dd80e628-85c5-4365-bf00-b624e1c5fc34.png" alt="เกียรติบัตร">
+      <h3>เกียรติบัตรออนไลน์</h3>
+      <p>ร่วมกิจกรรมและรับเกียรติบัตร</p>
+      <button class="btn blue" onclick="window.open('https://suwarinkoed-pixel.github.io/reading-online/','_blank')">
+        เข้าร่วมกิจกรรม
+      </button>
+    </article>
+
+    <article class="card">
+      <img src="https://i.postimg.cc/J4NddfBz/d6301bac-5051-46ae-8f02-e51a1a4ef492.png" alt="แหล่งเรียนรู้">
+      <h3>แหล่งเรียนรู้</h3>
+      <p>สำรวจแหล่งเรียนรู้ในพื้นที่</p>
+      <button class="btn" onclick="go('learning')">
+        สำรวจแหล่งเรียนรู้
+      </button>
+    </article>
+
+    <article class="card">
+      <img src="https://i.postimg.cc/9FYJByvr/70e5efb1-d70a-4ee5-bd5e-44d646e3569f.png" alt="E-Book">
+      <h3>E-Book ออนไลน์</h3>
+      <p>อ่านหนังสือได้ทุกที่ ทุกเวลา</p>
+      <button class="btn pink" onclick="go('ebooks')">
+        เปิดชั้นหนังสือ
+      </button>
+    </article>
+  </div>
+</section>
+
+<section id="learning" class="page">
+  <button class="back" onclick="go('home')">← กลับหน้าแรก</button>
+  <h2>สำรวจแหล่งเรียนรู้ 🗺️</h2>
+  <p class="subtitle">เลือกพื้นที่หรือค้นหาแหล่งเรียนรู้ที่สนใจ</p>
+
+  <div class="cards">
+    <article class="card">
+      <img src="https://i.postimg.cc/HWMgTWNT/c3812d6c-0ae2-46ec-a40f-5446ea445727.png" alt="นครปฐม">
+      <h3>แหล่งเรียนรู้จังหวัดนครปฐม</h3>
+      <p>คลังแหล่งเรียนรู้ระดับจังหวัด</p>
+      <button class="btn blue" onclick="window.open('https://survery.my.canva.site/tmap-npt','_blank')">
+        เปิดเว็บไซต์ ↗
+      </button>
+    </article>
+
+    <article class="card">
+      <img src="https://i.postimg.cc/wMQ43rJW/b012f9dc-84be-40b8-bf43-d2506f8221de.png" alt="พุทธมณฑล">
+      <h3>แหล่งเรียนรู้อำเภอพุทธมณฑล</h3>
+      <p>แผนที่แหล่งเรียนรู้ในพื้นที่</p>
+      <button class="btn" onclick="window.open('https://survery.my.canva.site/tmap-npt07','_blank')">
+        เปิดแผนที่ ↗
+      </button>
+    </article>
+
+    <article class="card">
+      <img src="https://i.postimg.cc/6pt2dmZL/81cb4662-49d0-4cd3-80c5-4f956f71a85d.png" alt="เพิ่มเติม">
+      <h3>แหล่งเรียนรู้เพิ่มเติม</h3>
+      <p>คลังข้อมูลภายใน Digital Library</p>
+      <button class="btn pink" onclick="go('sources')">
+        ดูแหล่งเรียนรู้ →
+      </button>
+    </article>
+  </div>
+</section>
+
+<section id="sources" class="page">
+  <button class="back" onclick="go('learning')">← กลับหน้าแหล่งเรียนรู้</button>
+  <h2>แหล่งเรียนรู้เพิ่มเติม</h2>
+
+  <div class="search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="sourceSearch" placeholder="ค้นหาแหล่งเรียนรู้..." oninput="renderSources()">
+  </div>
+
+  <div id="sourceChips" class="chips"></div>
+  <p id="sourceStatus" class="status"></p>
+  <div id="sourceCards" class="cards"></div>
+</section>
+
+<section id="sourceDetail" class="page">
+  <button class="back" onclick="go('sources')">← กลับรายการแหล่งเรียนรู้</button>
+  <div id="detailBox" class="detail"></div>
+</section>
+
+<section id="ebooks" class="page">
+  <button class="back" onclick="go('home')">← กลับหน้าแรก</button>
+
+  <div class="ebook-banner">
+    <h1>📖 E-Book ออนไลน์</h1>
+    <p>หนังสืออ่านออนไลน์หลากหลายหมวดหมู่ อ่านได้ทุกที่ ทุกเวลา</p>
+  </div>
+
+  <div class="ebook-layout">
+    <aside class="ebook-menu">
+      <h3>📚 หมวดหมู่ E-Book</h3>
+      <div id="ebookCategories"></div>
+    </aside>
+
+    <div>
+      <div class="toolbar">
+        <div class="search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="ebookSearch" placeholder="ค้นหาชื่อหนังสือ..." oninput="renderEbooks()">
+        </div>
+        <div class="count" id="ebookCount">0 เรื่อง</div>
+      </div>
+
+      <p class="status" id="ebookStatus">กำลังโหลดหนังสือ...</p>
+      <div class="shelf" id="bookShelf" hidden></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Digital Library · ห้องสมุดประชาชนอำเภอพุทธมณฑล
+</footer>
+</main>
+
+<script>
+"use strict";
+
+const API_URL =
+"https://script.google.com/a/macros/dole.go.th/s/AKfycbx_toFk85SsqcwmOwti5kYgiF5i-VsJTXKKZlplKWFM6Amh7ehHAcoROwNU6gI6icJ1/exec";
+
+const BOOK_CATEGORIES = [
+  "หมวดนิทาน & วรรณกรรมเด็ก",
+  "หมวดพัฒนาตนเอง",
+  "หมวดการเงิน & ธุรกิจส่วนตัว",
+  "หมวดอาหาร & สูตรขนม",
+  "หมวดงานอดิเรก & ไลฟ์สไตล์"
+];
+
+const DEFAULT_COVER =
+"https://placehold.co/300x400/7736d9/ffffff?text=E-BOOK";
+
+let ebooks = [];
+let sources = [];
+let ebookCategory = "ทั้งหมด";
+let sourceCategory = "ทั้งหมด";
+let ebooksLoaded = false;
+let sourcesLoaded = false;
+let requestCounter = 0;
+
+function el(id) {
+  return document.getElementById(id);
+}
+
+function create(tag, cls, content) {
+  const element = document.createElement(tag);
+  if (cls) element.className = cls;
+  if (content !== undefined) element.textContent = content;
+  return element;
+}
+
+function safeUrl(value) {
+  try {
+    const url = new URL(String(value || "").trim());
+    return url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function toggleMenu(force) {
+  const sidebar = el("sidebar");
+  const overlay = el("overlay");
+  const open = typeof force === "boolean"
+    ? force
+    : !sidebar.classList.contains("open");
+
+  sidebar.classList.toggle("open", open);
+  overlay.classList.toggle("show", open);
+}
+
+function go(page) {
+  document.querySelectorAll(".page").forEach(p => {
+    p.classList.toggle("active", p.id === page);
+  });
+
+  document.querySelectorAll(".nav[data-page]").forEach(n => {
+    n.classList.toggle("active", n.dataset.page === page);
+  });
+
+  toggleMenu(false);
+  window.scrollTo(0, 0);
+
+  if (page === "ebooks") loadEbooks();
+  if (page === "sources") loadSources();
+}
+
+function openAdmin() {
+  window.open(API_URL, "_blank", "noopener,noreferrer");
+}
+
+/*
+  อ่านข้อมูลสาธารณะจาก Apps Script
+  ต้องมีฟังก์ชัน dlPublicJsonp_ ใน Code.gs
+*/
+function publicFetch(type) {
   return new Promise((resolve, reject) => {
     const callback =
-      'dlPublicCallback_' +
-      (++dlRequestCount) + '_' +
+      "dlPublicCallback_" +
+      (++requestCounter) + "_" +
       Math.random().toString(36).slice(2, 10);
 
-    const script = document.createElement('script');
+    const script = document.createElement("script");
+    let completed = false;
 
     const timeout = setTimeout(() => {
-      finish(new Error('หมดเวลารอข้อมูล'));
-    }, 18000);
+      finish(new Error("หมดเวลารอข้อมูล"));
+    }, 20000);
 
     function finish(error, data) {
+      if (completed) return;
+      completed = true;
+
       clearTimeout(timeout);
       delete window[callback];
       script.remove();
@@ -35,55 +633,327 @@ function dlPublicFetch(type) {
     };
 
     script.onerror = () => {
-      finish(new Error('เชื่อมต่อ Apps Script ไม่สำเร็จ'));
+      finish(new Error("เชื่อมต่อ Apps Script ไม่สำเร็จ"));
     };
 
     script.src =
-      DL_API_URL +
-      '?type=' + encodeURIComponent(type) +
-      '&callback=' + encodeURIComponent(callback);
+      API_URL +
+      "?type=" + encodeURIComponent(type) +
+      "&callback=" + encodeURIComponent(callback) +
+      "&v=" + Date.now();
 
     document.head.appendChild(script);
   });
 }
 
-// แสดงแหล่งเรียนรู้
-function loadSources() {
-  if (sourcesLoaded) return;
-
-  const status = document.getElementById('sourcesStatus');
-  status.textContent = 'กำลังโหลดข้อมูล...';
-
-  dlPublicFetch('sources')
-    .then(data => {
-      sources = Array.isArray(data) ? data : [];
-      sourcesLoaded = true;
-      renderChips();
-      renderSources();
-    })
-    .catch(err => {
-      status.textContent = 'โหลดไม่สำเร็จ: ' + err.message;
-    });
+function normalizeCategory(value) {
+  return String(value || "")
+    .replace(/^หมวด/, "")
+    .trim();
 }
 
-// แสดง E-Book บนชั้นหนังสือ
-function loadEbooks() {
-  const status = document.getElementById('ebookStatus');
-  status.textContent = 'กำลังโหลดหนังสือ...';
+function sameCategory(a, b) {
+  return normalizeCategory(a) === normalizeCategory(b);
+}
 
-  dlPublicFetch('ebooks')
-    .then(data => {
-      ebooks = Array.isArray(data) ? data : [];
+async function loadEbooks() {
+  if (ebooksLoaded) {
+    renderEbooks();
+    return;
+  }
+
+  el("ebookStatus").textContent =
+    "กำลังโหลดหนังสือจากห้องสมุด...";
+
+  try {
+    const result = await publicFetch("ebooks");
+    ebooks = Array.isArray(result) ? result : [];
+    ebooksLoaded = true;
+    renderEbookCategories();
+    renderEbooks();
+  } catch (error) {
+    el("ebookStatus").textContent =
+      "โหลดหนังสือไม่สำเร็จ: " + error.message;
+  }
+}
+
+function renderEbookCategories() {
+  const root = el("ebookCategories");
+  root.replaceChildren();
+
+  ["ทั้งหมด", ...BOOK_CATEGORIES].forEach(category => {
+    const count = category === "ทั้งหมด"
+      ? ebooks.length
+      : ebooks.filter(book =>
+          sameCategory(book.category, category)
+        ).length;
+
+    const button = create(
+      "button", "",
+      category + " (" + count + ")"
+    );
+
+    button.classList.toggle(
+      "active", ebookCategory === category
+    );
+
+    button.onclick = () => {
+      ebookCategory = category;
       renderEbookCategories();
       renderEbooks();
-    })
-    .catch(err => {
-      status.textContent = 'โหลดไม่สำเร็จ: ' + err.message;
-    });
+    };
+
+    root.appendChild(button);
+  });
 }
 
-// แอดมินเปิดผ่าน Apps Script โดยตรง
-function openAdmin() {
-  toggleMenu(false);
-  window.open(DL_API_URL, '_blank', 'noopener,noreferrer');
+function renderEbooks() {
+  const root = el("bookShelf");
+  const query = el("ebookSearch").value
+    .trim().toLowerCase();
+
+  root.replaceChildren();
+
+  const filtered = ebooks.filter(book => {
+    const categoryOK =
+      ebookCategory === "ทั้งหมด" ||
+      sameCategory(book.category, ebookCategory);
+
+    const searchText =
+      (String(book.title || "") + " " +
+       String(book.author || "")).toLowerCase();
+
+    return categoryOK && searchText.includes(query);
+  });
+
+  el("ebookCount").textContent =
+    filtered.length + " เรื่อง";
+
+  if (!filtered.length) {
+    root.hidden = true;
+    el("ebookStatus").textContent =
+      "ยังไม่มีหนังสือในหมวดนี้";
+    return;
+  }
+
+  root.hidden = false;
+  el("ebookStatus").textContent = "";
+
+  // ใช้ 4 คอลัมน์บนคอมพิวเตอร์
+  // และ 2 คอลัมน์บนมือถือผ่าน CSS
+  for (let i = 0; i < filtered.length; i += 4) {
+    const row = create("div", "book-row");
+
+    filtered.slice(i, i + 4).forEach(book => {
+      const card = create("div", "book");
+      const cover = create("img", "cover");
+
+      cover.src = safeUrl(book.cover) || DEFAULT_COVER;
+      cover.alt = String(book.title || "หนังสือ");
+      cover.loading = "lazy";
+
+      cover.onerror = () => {
+        cover.onerror = null;
+        cover.src = DEFAULT_COVER;
+      };
+
+      const title = create(
+        "div", "book-title",
+        book.title || "ไม่มีชื่อหนังสือ"
+      );
+
+      const button = create(
+        "button", "read", "📖 อ่านหนังสือ"
+      );
+
+      button.onclick = () => {
+        const url = safeUrl(
+          book.pdf || book.url || book.link
+        );
+
+        if (!url) {
+          alert("หนังสือเล่มนี้ยังไม่มีลิงก์สำหรับอ่าน");
+          return;
+        }
+
+        window.open(url, "_blank", "noopener,noreferrer");
+      };
+
+      card.append(cover, title, button);
+      row.appendChild(card);
+    });
+
+    root.appendChild(row);
+  }
 }
+
+async function loadSources() {
+  if (sourcesLoaded) {
+    renderSources();
+    return;
+  }
+
+  el("sourceStatus").textContent =
+    "กำลังโหลดแหล่งเรียนรู้...";
+
+  try {
+    const result = await publicFetch("sources");
+    sources = Array.isArray(result) ? result : [];
+    sourcesLoaded = true;
+    renderSourceChips();
+    renderSources();
+  } catch (error) {
+    el("sourceStatus").textContent =
+      "โหลดข้อมูลไม่สำเร็จ: " + error.message;
+  }
+}
+
+function renderSourceChips() {
+  const root = el("sourceChips");
+  root.replaceChildren();
+
+  const categories = [
+    "ทั้งหมด",
+    ...new Set(
+      sources.map(s => s.category || "ทั่วไป")
+    )
+  ];
+
+  categories.forEach(category => {
+    const button = create("button", "chip", category);
+
+    button.classList.toggle(
+      "active", sourceCategory === category
+    );
+
+    button.onclick = () => {
+      sourceCategory = category;
+      renderSourceChips();
+      renderSources();
+    };
+
+    root.appendChild(button);
+  });
+}
+
+function renderSources() {
+  const root = el("sourceCards");
+  const query = el("sourceSearch").value
+    .trim().toLowerCase();
+
+  root.replaceChildren();
+
+  const filtered = sources.filter(source => {
+    const categoryOK =
+      sourceCategory === "ทั้งหมด" ||
+      (source.category || "ทั่วไป") === sourceCategory;
+
+    const text = [
+      source.name,
+      source.description,
+      source.address,
+      source.location
+    ].join(" ").toLowerCase();
+
+    return categoryOK && text.includes(query);
+  });
+
+  el("sourceStatus").textContent =
+    filtered.length ? "" : "ไม่พบแหล่งเรียนรู้";
+
+  filtered.forEach(source => {
+    const card = create("article", "card");
+    const img = create("img");
+
+    img.src = safeUrl(source.image) ||
+      "https://placehold.co/500x350/ece0ff/6434b5?text=Learning";
+
+    img.alt = source.name || "แหล่งเรียนรู้";
+    img.loading = "lazy";
+
+    const title = create(
+      "h3", "", source.name || "แหล่งเรียนรู้"
+    );
+
+    const category = create(
+      "p", "", source.category || "ทั่วไป"
+    );
+
+    const button = create(
+      "button", "btn", "ดูรายละเอียด"
+    );
+
+    button.onclick = () => showSource(source);
+
+    card.append(img, title, category, button);
+    root.appendChild(card);
+  });
+}
+
+function showSource(source) {
+  const root = el("detailBox");
+  root.replaceChildren();
+
+  root.appendChild(
+    create("h2", "", source.name || "")
+  );
+
+  root.appendChild(
+    create("p", "subtitle", source.category || "")
+  );
+
+  const imageURL = safeUrl(source.image);
+
+  if (imageURL) {
+    const image = create("img");
+    image.src = imageURL;
+    image.alt = source.name || "";
+    root.appendChild(image);
+  }
+
+  root.appendChild(
+    create("p", "", source.description || "")
+  );
+
+  root.appendChild(
+    create(
+      "p", "",
+      "📍 " +
+      (source.address || source.location || "ไม่ระบุที่ตั้ง")
+    )
+  );
+
+  const gallery = String(source.gallery || "")
+    .split(/\r?\n/)
+    .map(safeUrl)
+    .filter(Boolean);
+
+  gallery.forEach(url => {
+    const image = create("img");
+    image.src = url;
+    image.loading = "lazy";
+    image.style.marginTop = "15px";
+    root.appendChild(image);
+  });
+
+  [
+    ["🗺️ เปิดแผนที่", source.map || source.maps],
+    ["🌐 เปิดเว็บไซต์", source.website]
+  ].forEach(([label, value]) => {
+    const url = safeUrl(value);
+    if (!url) return;
+
+    const link = create("a", "", label);
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    root.appendChild(link);
+  });
+
+  go("sourceDetail");
+}
+
+renderEbookCategories();
+</script>
+</body>
+</html>
