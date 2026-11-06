@@ -19,7 +19,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      font-family: "Arial", sans-serif;
+      font-family: Arial, sans-serif;
       background: #f4efff;
     }
 
@@ -72,7 +72,6 @@
     }
 
     #fallback {
-      display: none;
       position: fixed;
       bottom: 18px;
       left: 50%;
@@ -83,6 +82,7 @@
       border-radius: 16px;
       box-shadow: 0 8px 25px #20105020;
       text-align: center;
+      display: none;
     }
 
     #fallback a {
@@ -108,7 +108,7 @@
   </iframe>
 
   <div id="fallback">
-    หากหน้าเว็บไซต์ไม่แสดง
+    หากเว็บไซต์ไม่แสดง
     <a id="directLink"
        target="_blank"
        rel="noopener noreferrer">
@@ -117,29 +117,23 @@
   </div>
 
   <script>
-    // ใส่ลิงก์ Google Apps Script Web App
+    // ลิงก์ Google Apps Script ของ Digital Library
     const WEB_APP_URL =
-      "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE";
+      "https://script.google.com/a/macros/dole.go.th/s/AKfycbx_toFk85SsqcwmOwti5kYgiF5i-VsJTXKKZlplKWFM6Amh7ehHAcoROwNU6gI6icJ1/exec";
 
     const frame = document.getElementById("libraryFrame");
     const loading = document.getElementById("loading");
     const fallback = document.getElementById("fallback");
     const directLink = document.getElementById("directLink");
 
-    if (WEB_APP_URL.startsWith("https://")) {
-      frame.src = WEB_APP_URL;
-      directLink.href = WEB_APP_URL;
-      fallback.style.display = "block";
+    frame.src = WEB_APP_URL;
+    directLink.href = WEB_APP_URL;
 
-      frame.addEventListener("load", () => {
-        loading.style.display = "none";
-      });
-    } else {
-      loading.innerHTML = `
-        <h2>⚙️ ยังไม่ได้ตั้งค่าลิงก์เว็บไซต์</h2>
-        <p>กรุณาใส่ URL ของ Apps Script ในไฟล์ index.html</p>
-      `;
-    }
+    fallback.style.display = "block";
+
+    frame.addEventListener("load", () => {
+      loading.style.display = "none";
+    });
   </script>
 
 </body>
